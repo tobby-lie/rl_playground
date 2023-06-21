@@ -1,0 +1,13 @@
+# artifacts from test runs
+instances/
+# blender render output files
+renders/
+
+rl_test.egg-info/
+venv/
+runs/
+build/
+.mypy_cache
+.DS_Store
+
+__pycache__

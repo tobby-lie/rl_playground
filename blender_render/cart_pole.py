@@ -1,10 +1,10 @@
 # give Python access to Blender's functionality
-"""TODO:"""
 import json
+import math
 
 import bpy
 import mathutils
-from mathutils import Vector
+from mathutils import Euler, Vector
 
 camera_data = bpy.data.cameras.new(name='Camera')
 camera_object = bpy.data.objects.new('Camera', camera_data)
@@ -21,7 +21,7 @@ bpy.context.scene.cursor.location = Vector((0.0,0.0,-1.0))
 
 # add a cube into the scene
 bpy.ops.mesh.primitive_cube_add()
-cube = bpy.context.active_object
+cube = bpy.context.selected_objects[0]
 
 bpy.context.scene.cursor.location = (0.0, 0.0, -0.75)
 
@@ -45,13 +45,13 @@ bpy.context.scene.cursor.location = saved_location
 ## Get the object
 #ob = bpy.context.active_object
 
-with open("/Users/tobbylie/Documents/rl_tests/test.json") as f:
+with open("/Users/tobbylie/Documents/rl_tests/instances/test.json") as f:
     data = json.load(f)
 
 # observations = data[-1]["observations"]
-observations = data[-5]["observations"]
+observations = data[-1]["observations"]
 positions = [observation[0] for observation in observations]
-rotations = [observation[1] for observation in observations]
+rotations = [observation[2] for observation in observations]
 
 # insert keyframe at frame one
 #with open("/Users/tobbylie/Documents/rl_anims/positions.txt") as f:
@@ -67,33 +67,42 @@ print(rotations)
 cube.scale.x = 0.4
 cube.scale.y = 0.4
 cube.scale.z = 0.4
+
+sword.scale.x = 0.4
+sword.scale.y = 0.4
+sword.scale.z = 0.4
+
 frame = 0
 for (position, rotation) in zip(positions, rotations):
-    if frame == 500:
-        break
+#    if frame == 500:
+#        break
     cube.keyframe_insert("location", frame=frame)
-    cube.location.x = position * 40
+    cube.location.x = position
     cube.location.z = -0.3
 #    cube.keyframe_insert("rotation_euler", frame=frame)
 #    cube.rotation_euler.y= rotation
 
     sword.keyframe_insert("location", frame=frame)
-    sword.location.x = position * 40
+    sword.location.x = position
     sword.location.z = 0.0
 
     sword.keyframe_insert("rotation_euler", frame=frame)
-    sword.rotation_euler.y= rotation
+    sword.rotation_euler.y = rotation
+#    sword.rotation_axis_angle[1] = rotation
+#    sword.rotation_euler = (0.0, rotation, 0.0)
+
+
 
 #    for _ in range(2):
 #        frame += 1
 #        cube.keyframe_insert("location", frame=frame)
 #        sword.keyframe_insert("location", frame=frame)
 #        sword.keyframe_insert("rotation_euler", frame=frame)
-#
-    frame += 5
+    frame += 1
+#    frame += 5
 
 
-def update_camera(camera, focus_point=mathutils.Vector((0.0, 0.0, 0.0)), distance=35.0):
+def update_camera(camera, focus_point=mathutils.Vector((0.0, 0.0, 0.0)), distance=12.0):
     """
     Focus the camera to a focus point and place the camera at a specific distance from that
     focus point. The camera stays in a direct line with the focus point.
